@@ -4,6 +4,12 @@ from flask import make_response, request
 from bs4 import BeautifulSoup
 import urllib, urllib2
 import json
+import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
+
 app = Flask(__name__)
 app.config.from_envvar('CONFIG_FILE')
 
@@ -52,6 +58,21 @@ def check_availability():
                        'room': table_cells[11].get_text(),
                        'prof': table_cells[12].get_text()}
             sections.append(section)
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = "UW Course Alerter"
+    msg['From']    = "UW Course Alerter <uwcoursealerter@heroku.com>" # Your from name and email address
+    msg['To']      = email_address
+
+    username = os.environ['MANDRILL_USERNAME']
+    password = os.environ['MANDRILL_APIKEY']
+    body = MIMEText('This is a test email', 'plain')
+    msg.attach(body)
+
+    s = smtplib.SMTP('smtp.mandrillapp.com', 587)
+    s.login(username, password)
+    s.sendmail(msg['From'], msg['To'], msg.as_string())
+    s.quit()
     api_res = Response(json.dumps(sections), 200, mimetype='application/json')
     return make_response(api_res)
 
