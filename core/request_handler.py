@@ -2,6 +2,7 @@ from flask import Response
 from flask import make_response, request
 import urllib, urllib2
 import json
+import re
 
 from request_helper import validate_fields_exist, make_error_response
 import scraper
@@ -19,6 +20,10 @@ def check_availability():
     subject = request.form['subject']
     cournum = int(request.form['number'])
     email_address = request.form['email']
+
+    email_pattern = r'[^@]+@[^@]+\.[^@]+'
+    if not re.match(email_pattern, email_address):
+        return make_error_response('{} is not a valid email address'.format(email_address))
 
     auth_status = authorization.authorize(email_address)
     if not auth_status:
