@@ -35,7 +35,15 @@ def check_availability():
     sections = scraper.extract_sections(page)
     sections_str = json.dumps(sections)
 
-    emailer.send_plain_text_mail(email_address, sections_str)
+    should_alert = False
+    for section in sections:
+        if section['enroll_total'] < section['enroll_cap']:
+            should_alert = True
+            break
+
+    if should_alert:
+        email_str = emailer.generate_open_sections_email(subject, cournum, sections)
+        emailer.send_html_mail(email_address, email_str)
 
     api_res = Response(sections_str, 200, mimetype='application/json')
     return make_response(api_res)
