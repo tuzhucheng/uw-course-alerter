@@ -34,6 +34,7 @@ def check_availability():
     page = res.read()
     sections = scraper.extract_sections(page)
     sections_str = json.dumps(sections)
+    sections_str += '\n'
 
     should_alert = False
     for section in sections:
