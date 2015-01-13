@@ -11,7 +11,7 @@ def generate_open_sections_email(subject, cournum, sections):
     <h1>There are sections open for {{ subject }} {{ cournum }}!</h1>
     <ul>
         {% for section in sections if section['enroll_total'] < section['enroll_cap'] %}
-        <li>{{ section['section'] }} taught by {{ section['prof'] }} at {{ section['room'] }} from {{ section['time'] }} has {{ section['enroll_total'] }} out of {{ section['enroll_cap'] }} students enrolled.</li>
+        <li>{{ section['component'] }} {{ section['section'] }} taught by {{ section['prof'] }} at {{ section['room'] }} from {{ section['time'] }} has {{ section['enroll_total'] }} out of {{ section['enroll_cap'] }} students enrolled.</li>
         {% endfor %}
     </ul>
     """)

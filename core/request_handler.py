@@ -20,6 +20,7 @@ def check_availability():
     subject = request.form['subject']
     cournum = int(request.form['number'])
     email_address = request.form['email']
+    sec = request.form.get('sec')
 
     email_pattern = r'[^@]+@[^@]+\.[^@]+'
     if not re.match(email_pattern, email_address):
@@ -42,20 +43,21 @@ def check_availability():
         return make_error_response('URL Error: {}'.format(e))
 
     page = res.read()
-    sections = scraper.extract_sections(page)
-    sections_str = json.dumps(sections)
-    sections_str += '\n'
+    blocks = scraper.extract_blocks(page)
+    blocks_str = json.dumps(blocks)
+    blocks_str += '\n'
 
     should_alert = False
-    for section in sections:
-        if section['enroll_total'] < section['enroll_cap']:
-            should_alert = True
-            break
+    for block in blocks:
+        if block['enroll_total'] < block['enroll_cap']:
+            if not sec or sec == block['section']:
+                should_alert = True
+                break
 
     if should_alert:
-        email_str = emailer.generate_open_sections_email(subject, cournum, sections)
+        email_str = emailer.generate_open_sections_email(subject, cournum, blocks)
         emailer.send_html_mail(email_address, email_str)
 
-    api_res = Response(sections_str, 200, mimetype='application/json')
+    api_res = Response(blocks_str, 200, mimetype='application/json')
     return make_response(api_res)
 

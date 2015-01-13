@@ -9,7 +9,6 @@ db = client[mongo_database_str]
 users_collection = db['users']
 
 def authorize(email):
-    print 'authorize.py'
     user_found = users_collection.find_one({'email': email})
     if not user_found:
         return False
