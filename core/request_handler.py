@@ -1,8 +1,9 @@
-from flask import Response
-from flask import make_response, request
 import urllib, urllib2
 import json
 import re
+
+from flask import Response
+from flask import make_response, request
 
 from request_helper import validate_fields_exist, make_error_response
 import scraper
@@ -18,7 +19,7 @@ def check_availability():
     level = request.form['level']
     sess = int(request.form['session'])
     subject = request.form['subject']
-    cournum = int(request.form['number'])
+    cournum = request.form['number']
     email_address = request.form['email']
     sec = request.form.get('sec')
 
