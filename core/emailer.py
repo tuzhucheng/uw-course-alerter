@@ -1,8 +1,7 @@
 import os
-import smtplib
 
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import sendgrid
+
 from jinja2 import Template
 
 
@@ -19,22 +18,11 @@ def generate_open_sections_email(subject, cournum, sections):
 
 
 def send_html_mail(recipient, text):
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = "UW Course Alerter"
-    msg['From']    = "UW Course Alerter <uw-alerter@heroku.com>" # Your from name and email address
-    msg['To']      = recipient
+    sg = sendgrid.SendGridClient(os.environ['SENDGRID_USERNAME'], os.environ['SENDGRID_PASSWORD'])
 
-    username = os.environ['MANDRILL_USERNAME']
-    password = os.environ['MANDRILL_APIKEY']
-    body = MIMEText(text, 'html', 'utf-8')
-    msg.attach(body)
-
-    s = smtplib.SMTP('smtp.mandrillapp.com', 587)
-    try:
-        s.login(username, password)
-        s.sendmail(msg['From'], msg['To'], msg.as_string())
-    except smtplib.SMTPAuthenticationError as e:
-        print 'SMTP Authentication Error! {}'.format(e)
-
-    s.quit()
-
+    message = sendgrid.Mail()
+    message.add_to(recipient)
+    message.set_subject('UW Course Alerter: Classes Open')
+    message.set_html(text)
+    message.set_from('UW Course Alerter')
+    status, msg = sg.send(message)
