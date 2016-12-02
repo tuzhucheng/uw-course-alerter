@@ -4,7 +4,7 @@ import subprocess
 import urllib
 
 def main():
-    api_url = 'https://uw-alert.herokuapp.com/check_availability'
+    api_url = 'http://localhost:5000/check_availability'
     courses = [{'level': 'under',
                 'session': 1151,
                 'subject': 'CS',

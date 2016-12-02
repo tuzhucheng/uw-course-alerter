@@ -8,7 +8,6 @@ from flask import make_response, request
 from request_helper import validate_fields_exist, make_error_response
 import scraper
 import emailer
-import authorization
 
 
 def check_availability():
@@ -26,10 +25,6 @@ def check_availability():
     email_pattern = r'[^@]+@[^@]+\.[^@]+'
     if not re.match(email_pattern, email_address):
         return make_error_response('{} is not a valid email address'.format(email_address))
-
-    auth_status = authorization.authorize(email_address)
-    if not auth_status:
-        return make_error_response('{} is not added to the whitelist, please contact the developer.'.format(email_address), 401)
 
     url = 'http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl'
     values = {'level': level, 'sess': sess, 'subject': subject, 'cournum': cournum}

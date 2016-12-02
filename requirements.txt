@@ -5,7 +5,6 @@ itsdangerous==0.24
 Jinja2==2.7.3
 MarkupSafe==0.23
 newrelic==2.38.0.31
-pymongo==2.7.2
 python-http-client==1.2.3
 requests==2.9.1
 sendgrid==2.2.1
